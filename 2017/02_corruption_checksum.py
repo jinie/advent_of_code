@@ -11,3 +11,4 @@ sums=0
 for i,row in enumerate(rows):
 		sums+= sum([x/y for x in row for y in row if y >0 and y!=x and x%y==0])
 print(sums)
+
