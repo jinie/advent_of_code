@@ -18,8 +18,7 @@ def part2(input):
 		words = line.split(' ')
 		wl = []
 		for w in words:
-			ll = list(w)
-			ll.sort()
+			ll = sorted(list(w))
 			wl.append(ll)
 
 		for i,w in enumerate(wl):
@@ -33,5 +32,12 @@ with open('input04.txt','rt') as f:
 	input = f.readlines()
 	input = [l.strip('\r\n') for l in input]
 
+
 print("Valid passwords : {}".format(part1(input)))
 print("Valid passwords : {}".format(part2(input)))
+
+with open('input04.txt') as f:
+	input = f.read()
+res = [len({(*sorted(w),) for w in ws}) == len(ws) for ws in map(str.split, input.splitlines()) if len({*ws}) == len(ws)]
+print('Number of valid passphrases:', len(res))
+print('Number of valid passphrases (no anagrams):', sum(res))
