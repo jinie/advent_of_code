@@ -45,7 +45,7 @@ def part1(input):
         elif c == '{':
             group_ct += 1
             total += group_ct
-        elif c == '}' and group_ct > 0:
+        elif c == '}':
             group_ct -= 1
         elif c == '<':
             garbage = True

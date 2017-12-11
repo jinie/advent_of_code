@@ -8,10 +8,13 @@ def get_input():
 
 
 def sum_children(nodes, node):
+    if 'csum' in nodes[node]:
+        return nodes[node]['csum']
     total = nodes[node]['weight']
     if 'children' in nodes[node]:
         for n in nodes[node]['children']:
             total += sum_children(nodes, n)
+    nodes[node]['csum'] = total
     return total
 
 
