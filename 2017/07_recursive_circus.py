@@ -7,14 +7,21 @@ def get_input():
     return input
 
 
+def sum_children(nodes, node):
+    total = nodes[node]['weight']
+    if 'children' in nodes[node]:
+        for n in nodes[node]['children']:
+            total += sum_children(nodes, n)
+    return total
+
+
 def build_tree(input):
     nodes = {}
     for n in input:
         arr = n.split(' ')
         k = arr[0].strip(',')
         nodes[k] = {} if k not in nodes else nodes[k]
-        nodes[k]['weight'] = int(arr[1][1].strip('(').strip(')').strip())
-
+        nodes[k]['weight'] = int(arr[1].strip('(').strip(')').strip())
         if '->' in arr:
             arr = [v.strip(',') for v in arr]
             for cn in arr[3:]:
@@ -31,11 +38,33 @@ def part1(nodes):
 
 
 def part2(nodes, root):
-    # TODO:
-    pass
+    ret = None
+    if 'children' in nodes[root]:
+        sums = {}
+        for ch in nodes[root]['children']:
+            csum = sum_children(nodes, ch)
+            if csum not in sums:
+                sums[csum] = [ch]
+            else:
+                sums[csum].append(ch)
+
+        odds = [sums[k][0] for k in sums if len(sums[k]) == 1]
+        if len(odds) == 1:
+            ret = part2(nodes, odds[0])
+    if ret is None:
+        children = nodes[nodes[root]['parent']]['children']
+        chsums = [sum_children(nodes, ch) for ch in children]
+        rootsum = sum_children(nodes, root)
+        if max(chsums) == rootsum:
+            diff = nodes[root]['weight'] - (rootsum - min(chsums))
+        else:
+            diff = nodes[root]['weight'] + (max(chsums) - rootsum)
+        ret = root,diff
+    return ret
 
 
 if __name__ == '__main__':
     nodes = build_tree(get_input())
     root = part1(nodes)[0]
     print("root =", root)
+    print(part2(nodes, root))
