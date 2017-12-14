@@ -4,7 +4,6 @@ def get_input():
     with open('input11.txt','rt') as f:
         input = f.read().strip().split(',')
     return input
-sign = lambda x: (1, -1)[x < 0]
 
 def hexdistance(x,y):
     x,y = abs(x), abs(y)
