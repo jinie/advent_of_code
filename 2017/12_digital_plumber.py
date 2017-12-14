@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 pipes = dict()
-visited = set()
-
 
 def get_input():
     with open('input12.txt', 'rt') as f:
