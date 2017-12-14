@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-from math import floor, sqrt
-from collections import namedtuple
 
-Point = namedtuple('Point',['x','y'])
 def get_input():
     with open('input11.txt','rt') as f:
         input = f.read().strip().split(',')
