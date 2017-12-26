@@ -1,65 +1,24 @@
 #!/usr/bin/env python3
 from collections import defaultdict
 
-def state_machine(tape, cursor, state):
-	if state == 'A':
-		if tape[cursor] == 0:
-			tape[cursor] = 1
-			cursor += 1
-		else:
-			del tape[cursor]
-			cursor -= 1
-		state = 'B'
-	elif state == 'B':
-		if tape[cursor] == 0:
-			del tape[cursor]
-			cursor += 1
-			state = 'C'
-		else:
-			tape[cursor] = 1
-			cursor -= 1
-			state = 'B'
-	elif state == 'C':
-		if tape[cursor] == 0:
-			tape[cursor] = 1
-			cursor += 1
-			state = 'D'
-		else:
-			del tape[cursor]
-			cursor -= 1
-			state = 'A'
-	elif state == 'D':
-		if tape[cursor] == 0:
-			state = 'E'
-		else:
-			state = 'F'
-		tape[cursor] = 1
-		cursor -= 1
-	elif state == 'E':
-		if tape[cursor] == 0:
-			tape[cursor] = 1
-			state = 'A'
-		else:
-			tape[cursor] = 0
-			state = 'D'
-		cursor -= 1
-	elif state == 'F':
-		if tape[cursor] == 0:
-			tape[cursor] = 1
-			cursor += 1
-			state = 'A'
-		else:
-			tape[cursor] = 1
-			cursor -= 1
-			state = 'E'
-	return cursor,state
-
+states = {
+    'A': ((1,  1, 'B'), (0, -1, 'B')),
+    'B': ((0,  1, 'C'), (1, -1, 'B')),
+    'C': ((1,  1, 'D'), (0, -1, 'A')),
+    'D': ((1, -1, 'E'), (1, -1, 'F')),
+    'E': ((1, -1, 'A'), (0, -1, 'D')),
+    'F': ((1,  1, 'A'), (1, -1, 'E')),
+}
 
 tape = defaultdict(int)
 steps = 12586542
 cursor = 0
 state = 'A'
 
-for i in range(steps):
-	cursor, state = state_machine(tape, cursor, state)
+for _ in range(steps):
+	value = tape[cursor]
+	wr,move,state = states[state][value]
+	tape[cursor] = wr
+	cursor += move
+
 print(sum(tape.values()))
