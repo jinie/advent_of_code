@@ -1,14 +1,12 @@
+from collections import defaultdict
+
+
 def get_input():
     with open('input22.txt') as f:
         return [l.strip() for l in f.readlines()]
 
 
 class Sporifica:
-    x = 0
-    y = 0
-    ict = 0
-    infected = dict()
-
     # States
     # (C)lean -> (I)nfected
     simple_states = {'C': 'I', 'I': 'C'}
@@ -22,47 +20,54 @@ class Sporifica:
         'T': {'N': 'S', 'S': 'N', 'W': 'E', 'E': 'W'}
     }
 
-    def turn(self, heading, direction):
-        return self.ttable[direction][heading]
+    def defaultvalue(self):
+        return 'C'
 
-    def move(self):
-        if self.heading == 'S':
-            self.y += 1
-        elif self.heading == 'N':
-            self.y -= 1
-        elif self.heading == 'E':
-            self.x += 1
-        else:
-            self.x -= 1
-
-    def burst(self, simple=True):
-
-        if (self.x, self.y) not in self.infected.keys():
-            self.infected[(self.x, self.y)] = 'C'
-
-        direction = self.dir_states[self.infected[(self.x, self.y)]]
-        self.infected[(self.x, self.y)] = self.states[self.infected[(self.x, self.y)]]
-
-        if self.infected[(self.x, self.y)] == 'I':
-            self.ict += 1
-
-        if direction is not None:
-            self.heading = self.turn(self.heading, direction)
-        self.move()
-
-    def simulate(self, bursts, inp, simple=True):
-        self.infected = dict()
-        self.ict = 0
+    def load_initial(self, inp):
+        infected = defaultdict(self.defaultvalue)
         for y, row in enumerate(inp):
             for x, c in enumerate(row):
                 if c == '#':
-                    self.infected[(x, y)] = 'I'
-        self.x, self.y = len(inp) // 2, (len(inp) // 2)
-        self.heading = 'N'
+                    infected[(x, y)] = 'I'
+        return infected
+
+    def turn(self, heading, direction):
+        return self.ttable[direction][heading]
+
+    def move(self, x, y, heading):
+        if heading == 'S':
+            return (x, y + 1)
+        elif heading == 'N':
+            return (x, y - 1)
+        elif heading == 'E':
+            return (x + 1, y)
+        else:
+            return (x - 1, y)
+
+    def burst(self, x, y, heading, infected):
+        v = infected[(x,y)]
+        direction = self.dir_states[v]
+        nv = self.states[v]
+        
+        infected[(x, y)] = nv
+
+        if direction is not None:
+            heading = self.turn(heading, direction)
+        x, y = self.move(x, y, heading)
+
+        return x, y, heading, nv == 'I'
+
+    def simulate(self, bursts, inp, simple=True):
+        infected = self.load_initial(inp)
+        x, y = len(inp) // 2, (len(inp) // 2)
+        heading = 'N'
         self.states = self.simple_states if simple else self.evolved_states
+        ict = 0
         for _ in range(bursts):
-            self.burst(simple=simple)
-        return(self.ict)
+            x, y, heading,inf = self.burst(x, y, heading, infected)
+            if inf:
+                ict+=1
+        return(ict)
 
 
 if __name__ == '__main__':
