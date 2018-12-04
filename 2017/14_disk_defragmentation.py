@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+from pprint import pprint
 
 def hash(input, elements=list(range(256)), repeat=1):
     cpos = 0
@@ -73,7 +73,7 @@ def part2():
             if grid[y][x] == '1' and (x, y) not in visited:
                 groups += 1
                 search(x, y)
-    print(groups)
+    pprint(groups)
 
 
 input = 'uugsqrei'

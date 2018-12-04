@@ -1,0 +1,35 @@
+with open('02_input.txt','rt') as f:
+    lines = f.readlines()
+    lines = [l.strip() for l in lines]
+
+c2 = list()
+c3 = list()
+
+for l in lines:
+    letters = list(l)
+    for le in letters:
+        if l not in c2 and l.count(le) == 2:
+           c2.append(l)
+        if l not in c3 and l.count(le) == 3:
+            c3.append(l)
+print(len(c2) * len(c3))
+#print(len(c2))
+#print(c3)
+
+for b1i in range(len(c3)):
+    ndif = 0
+    dpos = -1
+    for b2i in range(b1i+1,len(c3)):
+        b1 = c3[b1i]
+        b2 = c3[b2i]
+        for li in range(len(list(b1))):
+            if b1[li] != b2[li]:
+                ndif += 1
+                dpos = li
+            if ndif > 1:
+            	print("discarding {}".format(b2i))
+                break
+        else:
+            print("only one char difference (idx={})\n\t{}\n\t{}".format(dpos,b1,b2))
+                
+            
